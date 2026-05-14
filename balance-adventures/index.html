@@ -1,471 +1,1353 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Balance Adventures — Couch to Kili</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --canvas:   #f7f4ef;
+    --canvas2:  #efe9e0;
+    --canvas3:  #e6dfd2;
+    --white:    #fdfcfa;
+    --ink:      #1c1c1a;
+    --ink-2:    #3d3c38;
+    --ink-3:    #7a7870;
+    --forest:   #2d4a35;
+    --forest-l: #3d6349;
+    --forest-d: #1f3326;
+    --rule:     rgba(28,28,26,0.1);
+    --rule-2:   rgba(28,28,26,0.06);
+    --sans:  'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
+    --serif: 'Lora', Georgia, serif;
+  }
 
-  <!-- SEO -->
-  <title>Balance Adventures — Couch to Kili | Kilimanjaro Expeditions UK</title>
-  <meta name="description" content="Couch to Kili: the complete 12-week programme that takes complete beginners to the summit of Kilimanjaro. Small groups, expert guidance, 92% summit success rate. Based in the UK." />
-  <meta name="keywords" content="Kilimanjaro, Couch to Kili, Kilimanjaro UK, adventure travel, expedition, beginner Kilimanjaro" />
-  <link rel="canonical" href="https://www.balanceadventures.co.uk/" />
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img { display: block; max-width: 100%; }
 
-  <!-- Open Graph (social sharing) -->
-  <meta property="og:title" content="Balance Adventures — Couch to Kili" />
-  <meta property="og:description" content="From your sofa to the summit of Kilimanjaro. A 12-week supported expedition programme for complete beginners." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.balanceadventures.co.uk/" />
-  <!-- Replace with real image path when available -->
-  <!-- <meta property="og:image" content="https://www.balanceadventures.co.uk/images/og-image.jpg" /> -->
+  /* ── TYPOGRAPHY ── */
+  h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.1; letter-spacing: -0.01em; }
+  .display { font-family: var(--serif); }
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--forest);
+  }
+  .eyebrow-muted { color: var(--ink-3); }
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  /* ── LAYOUT ── */
+  .container { max-width: 1240px; margin: 0 auto; padding: 0 48px; }
+  @media (max-width: 768px) { .container { padding: 0 24px; } }
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css" />
+  /* ── REVEAL ── */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-d1 { transition-delay: 0.1s; }
+  .reveal-d2 { transition-delay: 0.2s; }
+  .reveal-d3 { transition-delay: 0.32s; }
+
+  /* ════════════════════════════ NAV ════════════════════════════ */
+  #nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 48px;
+    transition: background 0.4s, padding 0.4s, color 0.4s, border-color 0.4s;
+    border-bottom: 1px solid transparent;
+  }
+  #nav .nav-logo, #nav .nav-links a { color: var(--white); }
+  #nav .nav-cta { background: var(--white); color: var(--ink); }
+  #nav.scrolled {
+    background: rgba(247,244,239,0.94);
+    backdrop-filter: blur(14px);
+    padding: 14px 48px;
+    border-color: var(--rule);
+  }
+  #nav.scrolled .nav-logo, #nav.scrolled .nav-links a { color: var(--ink); }
+  #nav.scrolled .nav-cta { background: var(--forest); color: var(--white); }
+  #nav.scrolled .burger span { background: var(--ink); }
+
+  .nav-logo {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .nav-logo .dot { color: var(--forest); }
+  #nav:not(.scrolled) .nav-logo .dot { color: var(--white); opacity: 0.7; }
+
+  .nav-links {
+    display: flex; gap: 36px; list-style: none;
+  }
+  .nav-links a {
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    transition: opacity 0.2s;
+    opacity: 0.85;
+  }
+  .nav-links a:hover { opacity: 1; }
+
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-cta {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 11px 22px;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: background 0.2s, transform 0.15s, color 0.2s;
+  }
+  .nav-cta:hover { transform: translateY(-1px); }
+
+  /* ════════════════════════════ HERO ════════════════════════════ */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 96px;
+    overflow: hidden;
+    color: var(--white);
+  }
+  .hero-photo {
+    position: absolute; inset: 0;
+    background-image: url('images/hero-everest.jpg');
+    background-size: cover;
+    background-position: center 35%;
+    filter: saturate(0.85) contrast(1.02);
+  }
+  .hero-veil {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(28,28,26,0.45) 0%, rgba(28,28,26,0.05) 30%, rgba(28,28,26,0.0) 55%, rgba(28,28,26,0.55) 100%),
+      linear-gradient(90deg, rgba(28,28,26,0.55) 0%, rgba(28,28,26,0.15) 55%, rgba(28,28,26,0) 100%);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+    padding: 0 48px;
+  }
+  .hero-eyebrow {
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .hero-eyebrow::before {
+    content: ''; width: 28px; height: 1px; background: rgba(255,255,255,0.6);
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(64px, 8.5vw, 120px);
+    font-weight: 500;
+    line-height: 0.98;
+    margin-bottom: 32px;
+    letter-spacing: -0.025em;
+  }
+  .hero-title em {
+    font-style: italic;
+    font-weight: 400;
+    color: rgba(255,255,255,0.95);
+  }
+  .hero-sub {
+    font-size: 17px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.78);
+    max-width: 500px;
+    margin-bottom: 44px;
+  }
+  .hero-actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--forest);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 16px 32px;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: var(--forest-l); transform: translateY(-2px); }
+  .btn-primary.on-light { background: var(--forest); color: var(--white); }
+
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 10px;
+    color: rgba(255,255,255,0.75);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .btn-ghost:hover { color: var(--white); }
+  .btn-ghost svg { width: 16px; opacity: 0.6; transition: opacity 0.2s; }
+  .btn-ghost:hover svg { opacity: 1; }
+
+  /* Scroll indicator */
+  .hero-scroll {
+    position: absolute;
+    bottom: 36px; right: 56px;
+    z-index: 2;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 10px;
+    color: rgba(255,255,255,0.5);
+  }
+  .hero-scroll-label {
+    font-size: 9px; letter-spacing: 0.22em;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+  }
+  .hero-scroll-line {
+    width: 1px; height: 56px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.6), transparent);
+    animation: scrollpulse 2.4s ease-in-out infinite;
+  }
+  @keyframes scrollpulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(0.6); transform-origin: top; }
+    50% { opacity: 1; transform: scaleY(1); }
+  }
+
+  /* Next departure window */
+  .hero-departure {
+    position: absolute;
+    top: 116px; right: 48px;
+    z-index: 2;
+    background: rgba(247,244,239,0.92);
+    backdrop-filter: blur(10px);
+    color: var(--ink);
+    padding: 22px 26px;
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 2px;
+    min-width: 240px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+  }
+  .hero-departure .dep-label {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--forest);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-departure .dep-label::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--forest);
+    box-shadow: 0 0 0 4px rgba(45,74,53,0.18);
+  }
+  .hero-departure .dep-date {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .hero-departure .dep-meta {
+    font-size: 12px;
+    color: var(--ink-3);
+    display: flex; flex-direction: column; gap: 4px;
+    padding-top: 10px;
+    border-top: 1px solid var(--rule);
+    margin-top: 10px;
+  }
+  .hero-departure .dep-meta span strong { color: var(--ink-2); font-weight: 500; }
+  .hero-departure .dep-spots {
+    margin-top: 14px;
+    font-size: 11px;
+    color: var(--ink-2);
+    display: flex; align-items: center; justify-content: space-between;
+    letter-spacing: 0.04em;
+  }
+  .hero-departure .dep-bar {
+    height: 3px; background: var(--canvas3); border-radius: 2px;
+    overflow: hidden; margin-top: 6px;
+  }
+  .hero-departure .dep-bar-fill {
+    height: 100%; width: 62%;
+    background: var(--forest);
+  }
+
+  @media (max-width: 900px) {
+    .hero-departure { display: none; }
+  }
+
+  /* ════════════════════════════ STATS ════════════════════════════ */
+  #stats {
+    background: var(--canvas2);
+    border-bottom: 1px solid var(--rule);
+  }
+  .stats-inner {
+    max-width: 1240px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .stat-item {
+    padding: 32px 24px;
+    border-right: 1px solid var(--rule);
+    text-align: center;
+  }
+  .stat-item:first-child { border-left: 1px solid var(--rule); }
+  .stat-number {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 8px;
+  }
+  @media (max-width: 900px) { .stats-inner { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 600px) { .stats-inner { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ════════════════════════════ PROPOSITION ════════════════════════════ */
+  #proposition {
+    padding: 140px 0;
+    background: var(--canvas);
+  }
+  .prop-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 96px;
+    align-items: center;
+  }
+  @media (max-width: 900px) { .prop-grid { grid-template-columns: 1fr; gap: 56px; } }
+
+  .prop-eyebrow { margin-bottom: 22px; }
+  .prop-title {
+    font-size: clamp(40px, 4.6vw, 64px);
+    color: var(--ink);
+    margin-bottom: 32px;
+  }
+  .prop-title em { font-style: italic; color: var(--forest); }
+  .prop-body {
+    font-size: 16px;
+    color: var(--ink-2);
+    margin-bottom: 18px;
+    line-height: 1.78;
+    max-width: 520px;
+  }
+
+  .prop-numbers {
+    display: flex; gap: 56px;
+    margin-top: 48px;
+    padding-top: 36px;
+    border-top: 1px solid var(--rule);
+  }
+  .prop-num {
+    font-family: var(--serif);
+    font-size: 52px;
+    font-weight: 500;
+    color: var(--forest);
+    line-height: 1;
+  }
+  .prop-num-label {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 10px;
+  }
+
+  /* Quote card */
+  .quote-card {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    padding: 44px 44px;
+    position: relative;
+    border-radius: 2px;
+  }
+  .quote-card::before {
+    content: '\201C';
+    font-family: var(--serif);
+    font-size: 110px;
+    color: var(--forest);
+    opacity: 0.18;
+    position: absolute;
+    top: -8px; left: 26px;
+    line-height: 1;
+  }
+  .quote-text {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.55;
+    margin-bottom: 24px;
+    margin-top: 12px;
+  }
+  .quote-author {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--forest);
+  }
+  .prop-rating {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 22px;
+  }
+  .stars { color: var(--forest); letter-spacing: 2px; font-size: 14px; }
+  .rating-text { font-size: 12px; color: var(--ink-3); }
+
+  /* ════════════════════════════ PROGRAMME ════════════════════════════ */
+  #programme {
+    padding: 140px 0;
+    background: var(--canvas2);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .prog-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: end;
+    margin-bottom: 72px;
+  }
+  @media (max-width: 768px) { .prog-header { grid-template-columns: 1fr; gap: 28px; } }
+
+  .prog-title {
+    font-size: clamp(40px, 4.4vw, 60px);
+    color: var(--ink);
+    margin-top: 16px;
+  }
+  .prog-title em { font-style: italic; color: var(--forest); }
+  .prog-intro {
+    font-size: 16px;
+    color: var(--ink-2);
+    line-height: 1.8;
+    align-self: end;
+    max-width: 460px;
+  }
+
+  .phases {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  @media (max-width: 900px) { .phases { grid-template-columns: 1fr; } }
+
+  .phase {
+    background: var(--canvas);
+    padding: 48px 38px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .phase:hover { background: var(--white); }
+  .phase-bg-num {
+    position: absolute;
+    bottom: -28px; right: -8px;
+    font-family: var(--serif);
+    font-size: 160px;
+    font-weight: 500;
+    color: var(--forest);
+    opacity: 0.06;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+  .phase-weeks {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--forest);
+    margin-bottom: 16px;
+  }
+  .phase-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  .phase-desc {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.75;
+    margin-bottom: 24px;
+  }
+  .phase-list {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 11px;
+    border-top: 1px solid var(--rule);
+    padding-top: 22px;
+  }
+  .phase-list li {
+    font-size: 13px;
+    color: var(--ink-2);
+    padding-left: 18px;
+    position: relative;
+    line-height: 1.55;
+  }
+  .phase-list li::before {
+    content: '';
+    position: absolute; left: 0; top: 9px;
+    width: 8px; height: 1px;
+    background: var(--forest);
+  }
+
+  /* ════════════════════════════ PACKAGES ════════════════════════════ */
+  #packages {
+    padding: 140px 0;
+    background: var(--canvas);
+  }
+  .packages-header {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 64px;
+  }
+  .packages-title {
+    font-size: clamp(40px, 4.6vw, 64px);
+    color: var(--ink);
+    margin: 16px 0 18px;
+  }
+  .packages-title em { font-style: italic; color: var(--forest); }
+  .packages-sub {
+    font-size: 15px;
+    color: var(--ink-2);
+    line-height: 1.75;
+  }
+
+  .packages-grid {
+    max-width: 1240px; margin: 0 auto;
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  @media (max-width: 900px) {
+    .packages-grid { grid-template-columns: 1fr; max-width: 520px; }
+  }
+
+  .pkg {
+    background: var(--white);
+    padding: 48px 36px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: background 0.3s;
+  }
+  .pkg.featured {
+    background: var(--forest);
+    color: var(--white);
+  }
+
+  .pkg-badge {
+    position: absolute;
+    top: 0; left: 36px;
+    transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--white);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 1px;
+  }
+  .pkg.featured .pkg-badge { background: var(--white); color: var(--forest); }
+
+  .pkg-tier {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+  }
+  .pkg.featured .pkg-tier { color: rgba(255,255,255,0.65); }
+
+  .pkg-name {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 26px;
+  }
+  .pkg.featured .pkg-name { color: var(--white); }
+
+  .pkg-price {
+    font-family: var(--serif);
+    font-size: 52px;
+    font-weight: 500;
+    color: var(--forest);
+    line-height: 1;
+  }
+  .pkg.featured .pkg-price { color: var(--white); }
+
+  .pkg-note {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-top: 8px;
+    margin-bottom: 26px;
+    letter-spacing: 0.04em;
+  }
+  .pkg.featured .pkg-note { color: rgba(255,255,255,0.6); }
+
+  .pkg-divider {
+    height: 1px;
+    background: var(--rule);
+    margin-bottom: 26px;
+  }
+  .pkg.featured .pkg-divider { background: rgba(255,255,255,0.18); }
+
+  .pkg-features {
+    list-style: none;
+    flex: 1;
+    display: flex; flex-direction: column;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+  .pkg-features li {
+    font-size: 13px;
+    color: var(--ink-2);
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.55;
+  }
+  .pkg.featured .pkg-features li { color: rgba(255,255,255,0.85); }
+  .pkg-features li::before {
+    content: '';
+    position: absolute; left: 0; top: 9px;
+    width: 8px; height: 1px;
+    background: var(--forest);
+  }
+  .pkg.featured .pkg-features li::before { background: var(--white); }
+
+  .pkg-cta {
+    display: block;
+    text-align: center;
+    padding: 14px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--forest);
+    color: var(--forest);
+    border-radius: 2px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .pkg-cta:hover { background: var(--forest); color: var(--white); }
+  .pkg.featured .pkg-cta {
+    border-color: var(--white);
+    color: var(--white);
+    background: transparent;
+  }
+  .pkg.featured .pkg-cta:hover { background: var(--white); color: var(--forest); }
+
+  .packages-note {
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-3);
+    margin-top: 36px;
+    line-height: 1.8;
+  }
+
+  /* ════════════════════════════ ABOUT WILL ════════════════════════════ */
+  #about {
+    padding: 140px 0;
+    background: var(--canvas2);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    gap: 96px;
+    align-items: center;
+  }
+  @media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; gap: 56px; } }
+
+  .about-image-wrap {
+    position: relative;
+    aspect-ratio: 4/5;
+    overflow: hidden;
+  }
+  .about-image-wrap img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: saturate(0.92);
+  }
+  .about-accent {
+    position: absolute;
+    bottom: -20px; right: -20px;
+    width: 110px; height: 110px;
+    border: 1.5px solid var(--forest);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .about-caption {
+    position: absolute;
+    bottom: 16px; left: 16px;
+    background: rgba(247,244,239,0.92);
+    backdrop-filter: blur(8px);
+    padding: 8px 12px;
+    font-size: 10px;
+    color: var(--ink-2);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .about-eyebrow { margin-bottom: 22px; }
+  .about-title {
+    font-size: clamp(40px, 4.4vw, 60px);
+    color: var(--ink);
+    margin-bottom: 28px;
+  }
+  .about-title em { font-style: italic; color: var(--forest); }
+  .about-body {
+    font-size: 15px;
+    color: var(--ink-2);
+    line-height: 1.78;
+    margin-bottom: 16px;
+    max-width: 540px;
+  }
+
+  .credentials {
+    display: flex; flex-direction: column; gap: 14px;
+    margin: 32px 0;
+    padding: 28px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .cred {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .cred-marker {
+    width: 6px; height: 6px;
+    background: var(--forest);
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+  .cred-text {
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+
+  /* ════════════════════════════ TESTIMONIAL ════════════════════════════ */
+  #testimonial {
+    background: var(--ink);
+    padding: 160px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    color: var(--white);
+  }
+  #testimonial::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url('images/dawn-silhouette.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.28;
+    filter: saturate(0.7);
+  }
+  #testimonial::after {
+    content: '\201C';
+    font-family: var(--serif);
+    font-size: 360px;
+    color: rgba(247,244,239,0.05);
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .testi-quote {
+    font-family: var(--serif);
+    font-size: clamp(26px, 3.4vw, 44px);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--white);
+    max-width: 880px;
+    margin: 0 auto 28px;
+    line-height: 1.45;
+    position: relative;
+    z-index: 1;
+  }
+  .testi-author {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ════════════════════════════ FAQ ════════════════════════════ */
+  #faq {
+    padding: 140px 0;
+    background: var(--canvas);
+  }
+  .faq-header { margin-bottom: 56px; }
+  .faq-title {
+    font-size: clamp(40px, 4.4vw, 60px);
+    color: var(--ink);
+    margin-top: 16px;
+  }
+  .faq-title em { font-style: italic; color: var(--forest); }
+
+  .faq-list { border-top: 1px solid var(--rule); }
+  .faq-item { border-bottom: 1px solid var(--rule); }
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 26px 0;
+    cursor: pointer;
+    gap: 24px;
+    transition: padding 0.2s;
+  }
+  .faq-question-text {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .faq-icon {
+    width: 28px; height: 28px;
+    border: 1px solid var(--rule);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s, border-color 0.2s;
+    border-radius: 50%;
+  }
+  .faq-item.open .faq-icon {
+    background: var(--forest);
+    border-color: var(--forest);
+  }
+  .faq-icon svg { width: 11px; transition: transform 0.3s; }
+  .faq-item.open .faq-icon svg { transform: rotate(45deg); }
+  .faq-icon path { stroke: var(--ink); }
+  .faq-item.open .faq-icon path { stroke: var(--white); }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.16,1,0.3,1), padding 0.3s;
+  }
+  .faq-item.open .faq-answer { max-height: 320px; padding-bottom: 26px; }
+  .faq-answer-inner {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.8;
+    max-width: 720px;
+  }
+
+  /* ════════════════════════════ BOOK ════════════════════════════ */
+  #book {
+    padding: 160px 48px;
+    background: var(--forest);
+    color: var(--white);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #book::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url('images/sunset-ridge.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.18;
+    mix-blend-mode: overlay;
+  }
+  #book .eyebrow { color: rgba(255,255,255,0.7); position: relative; z-index: 1; }
+  .book-title {
+    font-size: clamp(48px, 6vw, 92px);
+    color: var(--white);
+    margin: 18px 0 24px;
+    position: relative; z-index: 1;
+  }
+  .book-title em { font-style: italic; color: rgba(255,255,255,0.85); }
+  .book-sub {
+    font-size: 16px;
+    color: rgba(255,255,255,0.78);
+    max-width: 540px;
+    margin: 0 auto 44px;
+    line-height: 1.75;
+    position: relative; z-index: 1;
+  }
+  .book-actions {
+    display: flex; align-items: center; justify-content: center;
+    gap: 20px; flex-wrap: wrap;
+    position: relative; z-index: 1;
+  }
+  #book .btn-primary {
+    background: var(--white);
+    color: var(--forest);
+  }
+  #book .btn-primary:hover { background: var(--canvas); }
+
+  .btn-outline {
+    display: inline-block;
+    border: 1px solid rgba(255,255,255,0.4);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 16px 32px;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--white); background: rgba(255,255,255,0.08); }
+
+  .book-reassurance {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 28px;
+    letter-spacing: 0.08em;
+    position: relative; z-index: 1;
+  }
+
+  /* ════════════════════════════ FOOTER ════════════════════════════ */
+  footer {
+    background: var(--ink);
+    padding: 56px 0 36px;
+    color: rgba(255,255,255,0.6);
+  }
+  .footer-inner {
+    max-width: 1240px; margin: 0 auto;
+    padding: 0 48px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 24px;
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+  .footer-logo .dot { color: rgba(255,255,255,0.6); }
+  .footer-links {
+    display: flex; gap: 28px; flex-wrap: wrap; justify-content: center;
+  }
+  .footer-links a {
+    color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--white); }
+  .footer-copy {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.06em;
+  }
+
+  /* ════════════════════════════ MOBILE NAV ════════════════════════════ */
+  .mobile-nav {
+    position: fixed; inset: 0;
+    background: var(--canvas);
+    z-index: 99;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 36px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .mobile-nav.open { opacity: 1; pointer-events: all; }
+  .mobile-nav a {
+    font-family: var(--serif);
+    font-size: 40px;
+    font-weight: 500;
+    color: var(--ink);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .mobile-nav a:hover { color: var(--forest); }
+
+  .burger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .burger span {
+    display: block;
+    width: 24px; height: 1px;
+    background: var(--white);
+    transition: transform 0.3s, opacity 0.3s, background 0.3s;
+  }
+  .burger.open span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); }
+  .burger.open span:nth-child(2) { opacity: 0; }
+  .burger.open span:nth-child(3) { transform: rotate(-45deg) translate(4px, -4px); }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .burger { display: flex; }
+    #nav { padding: 18px 24px; }
+    #nav.scrolled { padding: 14px 24px; }
+    .hero-content { padding: 0 24px; }
+    .hero-title { font-size: 56px; }
+    .hero-scroll { display: none; }
+    #book { padding: 100px 24px; }
+    #testimonial { padding: 100px 24px; }
+    .packages-grid { padding: 0 24px; }
+  }
+</style>
 </head>
 <body>
 
-<!-- ============================================================
-     NAV
-     ============================================================ -->
+<!-- NAV -->
 <nav id="nav">
-  <a href="#hero" class="nav-logo">Balance<span>Adventures</span></a>
-
+  <a href="#hero" class="nav-logo">Balance<span class="dot">·</span>Adventures</a>
   <ul class="nav-links">
     <li><a href="#programme">Programme</a></li>
     <li><a href="#packages">Packages</a></li>
-    <li><a href="#about">About Will</a></li>
-    <li><a href="#book">Contact</a></li>
+    <li><a href="#about">Guides</a></li>
+    <li><a href="#faq">FAQ</a></li>
   </ul>
-
   <div class="nav-right">
-    <a href="#book" class="btn btn-primary" style="padding: 10px 22px; font-size: 12px;">
-      Book a Call
-    </a>
-    <div class="nav-burger" id="burger" aria-label="Open menu" role="button" tabindex="0">
+    <a href="#book" class="nav-cta">Book a Call</a>
+    <div class="burger" id="burger" role="button" tabindex="0" aria-label="Open menu">
       <span></span><span></span><span></span>
     </div>
   </div>
 </nav>
 
-<!-- Mobile nav overlay -->
-<div class="mobile-nav" id="mobile-nav" role="dialog" aria-modal="true">
+<div class="mobile-nav" id="mobile-nav">
   <a href="#programme">Programme</a>
   <a href="#packages">Packages</a>
-  <a href="#about">About Will</a>
+  <a href="#about">Guides</a>
+  <a href="#faq">FAQ</a>
   <a href="#book">Book a Call</a>
 </div>
 
-<!-- ============================================================
-     HERO
-     ============================================================ -->
-<section id="hero" class="grain">
+<!-- ============================================================ HERO ============================================================ -->
+<section id="hero" data-screen-label="01 Hero">
+  <div class="hero-photo" aria-hidden="true"></div>
+  <div class="hero-veil" aria-hidden="true"></div>
 
-  <div class="hero-bg"></div>
-
-  <!-- Mountain silhouette -->
-  <div class="hero-mountain" aria-hidden="true">
-    <svg viewBox="0 0 1440 600" preserveAspectRatio="xMidYMax slice" fill="currentColor">
-      <path d="M0,600 L0,420 L160,210 L300,340 L480,100 L620,20 L760,90 
-               L900,210 L1020,140 L1140,280 L1280,170 L1400,310 L1440,290 
-               L1440,600 Z" />
-    </svg>
-  </div>
+  <!-- Next departure window -->
+  <aside class="hero-departure reveal reveal-d1" aria-label="Next departure">
+    <div class="dep-label">Next Departure</div>
+    <div class="dep-date">March 2027</div>
+    <div class="dep-meta">
+      <span><strong>Route</strong> · Lemosho · 8 days</span>
+      <span><strong>Group</strong> · Max 8 climbers</span>
+    </div>
+    <div class="dep-spots">
+      <span>3 of 8 places remaining</span>
+    </div>
+    <div class="dep-bar" aria-hidden="true"><div class="dep-bar-fill"></div></div>
+  </aside>
 
   <div class="hero-content">
-    <p class="eyebrow hero-eyebrow">
-      Kilimanjaro &nbsp;·&nbsp; Tanzania &nbsp;·&nbsp; Africa's Highest Summit
-    </p>
-
-    <h1 class="hero-title">
+    <p class="eyebrow hero-eyebrow reveal">Kilimanjaro · Tanzania · 5,895m</p>
+    <h1 class="hero-title reveal reveal-d1">
       From your<br><em>sofa</em> to the<br>summit.
     </h1>
-
-    <p class="hero-sub">
-      Couch to Kili is a complete 12&#8209;week programme that takes ordinary people 
-      to the top of Africa's highest mountain. No mountaineering experience needed. 
-      Just a decision to go.
+    <p class="hero-sub reveal reveal-d2">
+      Couch to Kili is a complete 6-month programme that takes ordinary people to the top of Africa. No mountaineering experience required — just a decision to go.
     </p>
-
-    <div class="hero-actions">
-      <a href="#book" class="btn btn-primary" data-cta>Reserve Your Place</a>
-      <a href="#programme" class="btn btn-outline">How It Works</a>
+    <div class="hero-actions reveal reveal-d3">
+      <a href="#book" class="btn-primary">Reserve Your Place</a>
+      <a href="#programme" class="btn-ghost">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1"></circle><path d="M8 5v6M8 11l-2-2M8 11l2-2" stroke="currentColor" stroke-width="1" stroke-linecap="round"></path></svg>
+        How it works
+      </a>
     </div>
   </div>
 
   <div class="hero-scroll" aria-hidden="true">
     <div class="hero-scroll-line"></div>
-    <span>Scroll</span>
+    <span class="hero-scroll-label">Scroll</span>
   </div>
-
 </section>
 
-<!-- ============================================================
-     STAT BAR
-     ============================================================ -->
-<div id="stats" aria-label="Key statistics">
+<!-- ============================================================ STATS ============================================================ -->
+<div id="stats" data-screen-label="02 Stats">
   <div class="stats-inner">
-
-    <div class="stat-item">
-      <div class="stat-number">5,895m</div>
-      <div class="stat-label">Summit elevation</div>
-    </div>
-
-    <div class="stat-sep" aria-hidden="true"></div>
-
-    <div class="stat-item">
-      <div class="stat-number">92%</div>
-      <div class="stat-label">Our summit success rate</div>
-    </div>
-
-    <div class="stat-sep" aria-hidden="true"></div>
-
-    <div class="stat-item">
-      <div class="stat-number">65%</div>
-      <div class="stat-label">Industry average</div>
-    </div>
-
-    <div class="stat-sep" aria-hidden="true"></div>
-
-    <div class="stat-item">
-      <div class="stat-number">12</div>
-      <div class="stat-label">Weeks of guided preparation</div>
-    </div>
-
-    <div class="stat-sep" aria-hidden="true"></div>
-
-    <div class="stat-item">
-      <div class="stat-number">8</div>
-      <div class="stat-label">Max group size</div>
-    </div>
-
-    <div class="stat-sep" aria-hidden="true"></div>
-
-    <div class="stat-item">
-      <div class="stat-number">0</div>
-      <div class="stat-label">Experience required</div>
-    </div>
-
+    <div class="stat-item reveal"><div class="stat-number">5,895m</div><div class="stat-label">Summit elevation</div></div>
+    <div class="stat-item reveal reveal-d1"><div class="stat-number">92%</div><div class="stat-label">Our summit rate</div></div>
+    <div class="stat-item reveal reveal-d2"><div class="stat-number">65%</div><div class="stat-label">Industry average</div></div>
+    <div class="stat-item reveal reveal-d2"><div class="stat-number">6mo</div><div class="stat-label">Guided preparation</div></div>
+    <div class="stat-item reveal reveal-d3"><div class="stat-number">8</div><div class="stat-label">Max group size</div></div>
+    <div class="stat-item reveal reveal-d3"><div class="stat-number">0</div><div class="stat-label">Experience required</div></div>
   </div>
 </div>
 
-<!-- ============================================================
-     PROPOSITION
-     ============================================================ -->
-<section id="proposition">
+<!-- ============================================================ PROPOSITION ============================================================ -->
+<section id="proposition" data-screen-label="03 Proposition">
   <div class="prop-grid container">
-
     <div class="reveal">
-      <p class="eyebrow">The Balance Difference</p>
-      <h2 class="section-title prop-title">
-        Most companies sell a trip.<br>We sell a <em>summit.</em>
-      </h2>
+      <p class="eyebrow prop-eyebrow">The Balance Difference</p>
+      <h2 class="prop-title">Most operators sell a trip.<br>We sell a <em>summit.</em></h2>
       <p class="prop-body">
-        The average success rate on Kilimanjaro is 65%. That means one in three 
-        people who pay thousands of pounds don't make it to the top. Usually, 
-        it's not fitness that stops them — it's preparation.
+        One in three people who attempt Kilimanjaro don't make it to the top. The industry average success rate is 65%. Usually, it's not fitness that stops them — it's preparation.
       </p>
       <p class="prop-body">
-        Balance Adventures does something different. Your journey starts months 
-        before you set foot in Tanzania. We train you, prepare you, connect you with 
-        your group, and support you every step of the way. Then we get you to the summit.
+        We start months before you land in Tanzania. Training plans, group calls, a UK training hike, altitude briefings. By the time you're at the foot of the mountain, you're ready.
       </p>
       <div class="prop-numbers">
-        <div class="prop-num-item">
-          <div class="prop-num">8</div>
-          <div class="prop-num-label">Max per group</div>
-        </div>
-        <div class="prop-num-item">
-          <div class="prop-num">7</div>
-          <div class="prop-num-label">Days on the mountain</div>
-        </div>
-        <div class="prop-num-item">
-          <div class="prop-num">0</div>
-          <div class="prop-num-label">Experience needed</div>
-        </div>
+        <div><div class="prop-num">8</div><div class="prop-num-label">Max per group</div></div>
+        <div><div class="prop-num">7</div><div class="prop-num-label">Days on the mountain</div></div>
+        <div><div class="prop-num">0</div><div class="prop-num-label">Experience needed</div></div>
       </div>
     </div>
 
-    <div class="reveal reveal-delay-2">
+    <div class="reveal reveal-d2">
       <div class="quote-card">
         <p class="quote-text">
-          Hiking with Will is such a great experience. He's an excellent guide — 
-          not just because of his knowledge, but because of his genuine passion 
-          for getting people to where they want to go.
+          Hiking with Will is such a great experience. He's an excellent guide — not just because of his knowledge, but because of his genuine passion for getting people to where they want to go.
         </p>
         <p class="quote-author">Georgia M. — expedition participant</p>
+        <div class="prop-rating">
+          <span class="stars">★★★★★</span>
+          <span class="rating-text">Verified participant</span>
+        </div>
       </div>
     </div>
-
   </div>
 </section>
 
-<!-- ============================================================
-     PROGRAMME
-     ============================================================ -->
-<section id="programme">
-
+<!-- ============================================================ PROGRAMME ============================================================ -->
+<section id="programme" data-screen-label="04 Programme">
   <div class="prog-header container reveal">
     <div>
       <p class="eyebrow">How It Works</p>
-      <h2 class="section-title prog-title">
-        The Couch to <em>Kili</em><br>Programme
-      </h2>
+      <h2 class="prog-title">The Couch to <em>Kili</em> programme</h2>
     </div>
     <p class="prog-intro">
-      Your journey to Africa's highest summit, broken into three 
-      distinct phases. Each one builds on the last.
+      Your journey broken into three phases. Each one builds on the last — so by the time you're on the mountain, the hard work is already done.
     </p>
   </div>
 
   <div class="phases container">
-
     <div class="phase reveal">
       <div class="phase-bg-num" aria-hidden="true">01</div>
-      <p class="phase-weeks">Months 1 - 2</p>
-      <h3 class="phase-title">Build Your Foundation</h3>
+      <p class="phase-weeks">Months 1–2</p>
+      <h3 class="phase-title">Build your foundation</h3>
       <p class="phase-desc">
-        We start exactly where you are. Whether you're a walker, runner, 
-        or seasoned climber, your training plan is tailored to your starting point. 
-        No one gets left behind.
+        We start where you are. Whether you walk to work or run marathons, your plan is tailored to your starting point. No one gets left behind.
       </p>
-      <ul class="phase-list" aria-label="Phase 1 features">
-        <li>Personalised training plan delivered by email</li>
+      <ul class="phase-list">
+        <li>Personalised training plan delivered to your inbox</li>
         <li>Group video call — meet your team</li>
         <li>Full gear guide with budget alternatives</li>
       </ul>
     </div>
 
-    <div class="phase reveal reveal-delay-1">
+    <div class="phase reveal reveal-d1">
       <div class="phase-bg-num" aria-hidden="true">02</div>
-      <p class="phase-weeks">Months 3 - 4</p>
-      <h3 class="phase-title">Build Your Confidence</h3>
+      <p class="phase-weeks">Months 3–4</p>
+      <h3 class="phase-title">Build your confidence</h3>
       <p class="phase-desc">
-        The training gets harder. The bond between you and your group gets stronger. 
-        This is where most people surprise themselves.
+        The training gets harder. The bond with your group gets stronger. This is where most people surprise themselves.
       </p>
-      <ul class="phase-list" aria-label="Phase 2 features">
+      <ul class="phase-list">
         <li>UK training hike — Snowdon or Scafell Pike</li>
         <li>Altitude sickness briefing with a specialist</li>
-        <li>One-to-one video call with Will</li>
-        <li>Summit buddy pairing (optional)</li>
+        <li>One-to-one call with Will</li>
+        <li>Summit buddy pairing</li>
       </ul>
     </div>
 
-    <div class="phase reveal reveal-delay-2">
+    <div class="phase reveal reveal-d2">
       <div class="phase-bg-num" aria-hidden="true">03</div>
-      <p class="phase-weeks">Months 5 - 6 + Expedition</p>
-      <h3 class="phase-title">Summit Ready</h3>
+      <p class="phase-weeks">Months 5–6 + Expedition</p>
+      <h3 class="phase-title">Summit ready</h3>
       <p class="phase-desc">
-        Final preparation, then Tanzania. Seven days on the mountain with 
-        daily health checks, your group around you, and your expedition leader leading the way.
+        Final preparation, then Tanzania. Seven days on the mountain with daily health checks, your group, and your expedition leader.
       </p>
-      <ul class="phase-list" aria-label="Phase 3 features">
+      <ul class="phase-list">
         <li>Pre-departure information session</li>
-        <li>Airport transfers and hotel in Moshi</li>
+        <li>Airport transfers + hotel in Moshi</li>
         <li>Expedition doctor on the mountain</li>
-        <li>8 day Lemosho/Rongai route climb</li>
+        <li>8-day Lemosho/Rongai route climb</li>
         <li>Summit certificate + celebration event</li>
       </ul>
     </div>
-
   </div>
 </section>
 
-<!-- ============================================================
-     PACKAGES
-     ============================================================ -->
-<section id="packages">
-
-  <div class="packages-header reveal">
-    <p class="eyebrow">Choose Your Experience</p>
-    <h2 class="section-title packages-title">
-      Three ways to <em>climb.</em>
-    </h2>
+<!-- ============================================================ PACKAGES ============================================================ -->
+<section id="packages" data-screen-label="05 Packages">
+  <div class="packages-header reveal container">
+    <p class="eyebrow">Choose your experience</p>
+    <h2 class="packages-title">Three ways to <em>climb.</em></h2>
     <p class="packages-sub">
-      All packages include the 8-day Kilimanjaro expedition and the full 
-      6 month Couch to Kili preparation programme.
+      All packages include the 8-day Kilimanjaro expedition and the full 6-month Couch to Kili preparation programme.
     </p>
   </div>
 
   <div class="packages-grid">
-
-    <!-- TIER 1 -->
     <div class="pkg reveal">
       <p class="pkg-tier">Tier 1</p>
       <h3 class="pkg-name">Basecamp</h3>
       <div class="pkg-price">£2,999</div>
-      <p class="pkg-note">per person &nbsp;·&nbsp; flights not included</p>
+      <p class="pkg-note">per person · flights not included</p>
       <div class="pkg-divider"></div>
       <ul class="pkg-features">
-        <li>8 day Kilimanjaro climb (all inclusive)</li>
-        <li>6 month structured training programme</li>
+        <li>8-day Kilimanjaro climb (all inclusive)</li>
+        <li>6-month structured training programme</li>
         <li>Expedition doctor on the mountain</li>
-        <li>UK training hike (Snowdon or Scafell Pike)</li>
-        <li>Monthly group online meets & webinars</li>
+        <li>UK training hike</li>
+        <li>Monthly group online meets</li>
         <li>Detailed gear guide</li>
-        <li>Pre-departure briefing session</li>
+        <li>Pre-departure briefing</li>
         <li>Summit certificate</li>
       </ul>
-      <a href="#book" class="pkg-cta" data-cta>Reserve a Place</a>
+      <a href="#book" class="pkg-cta">Reserve a place</a>
     </div>
 
-    <!-- TIER 2 — FEATURED -->
-    <div class="pkg featured reveal reveal-delay-1">
+    <div class="pkg featured reveal reveal-d1">
       <div class="pkg-badge">Most Popular</div>
       <p class="pkg-tier">Tier 2</p>
       <h3 class="pkg-name">Summit Ready</h3>
       <div class="pkg-price">£3,499</div>
-      <p class="pkg-note">per person &nbsp;·&nbsp; flights not included</p>
+      <p class="pkg-note">per person · flights not included</p>
       <div class="pkg-divider"></div>
       <ul class="pkg-features">
         <li>Everything in Basecamp</li>
-        <li>One-to-one video calls with Expedition Leader</li>
-        <li>More spacious tented accomodation with standing room & dining vestibule</li>
+        <li>One-to-one video calls with Will</li>
+        <li>Spacious tented accommodation with standing room and dining vestibule</li>
       </ul>
-      <a href="#book" class="pkg-cta" data-cta>Reserve a Place</a>
+      <a href="#book" class="pkg-cta">Reserve a place</a>
     </div>
 
-    <!-- TIER 3 -->
-    <div class="pkg reveal reveal-delay-2">
+    <div class="pkg reveal reveal-d2">
       <p class="pkg-tier">Tier 3</p>
       <h3 class="pkg-name">The Full Mountain</h3>
-     <div class="pkg-price">£5,199</div>
-      <p class="pkg-note">per person &nbsp;·&nbsp; flights not included</p>
+      <div class="pkg-price">£5,199</div>
+      <p class="pkg-note">per person · flights not included</p>
       <div class="pkg-divider"></div>
       <ul class="pkg-features">
         <li>Everything in Summit Ready</li>
-        <li>Luxury tented accomodation with camp bed, private en-suite bathroom vestibule & private dining experience</li>
-        <li>3 personal training sessions (video call)</li>
+        <li>Luxury tented accommodation with private en-suite and dining</li>
+        <li>3 personal training sessions with Will</li>
         <li>Post-trip "Next Peak" consultation</li>
-        <li>Balance Adventures buff</li>
+        <li>Balance Adventures keepsake gift</li>
       </ul>
-      <a href="#book" class="pkg-cta" data-cta>Reserve a Place</a>
+      <a href="#book" class="pkg-cta">Reserve a place</a>
     </div>
-
   </div>
 
-  <p class="packages-note reveal">
-    All prices are per person. A 30% deposit secures your place — 
-    the balance is due 10 weeks before departure.<br>
-    Add-ons available: Safari extension, Zanzibar beach stay, private room upgrade.
+  <p class="packages-note reveal container">
+    30% deposit secures your place — balance due 10 weeks before departure.<br>
+    Add-ons available: Safari extension · Zanzibar beach stay · Private room upgrade
   </p>
-
 </section>
 
-<!-- ============================================================
-     ABOUT WILL
-     ============================================================ -->
-<section id="about">
+<!-- ============================================================ ABOUT WILL ============================================================ -->
+<section id="about" data-screen-label="06 About Will">
   <div class="about-grid container">
-
-    <!-- Photo placeholder — replace with <img src="images/will.jpg" alt="Will, founder of Balance Adventures"> -->
-    <div class="about-image reveal">
-      <div class="about-image-placeholder">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-        </svg>
-        <span>Your photo here</span>
-      </div>
+    <div class="about-image-wrap reveal">
+      <img src="images/will-peace.jpg" alt="Will on a high alpine ridge with glacier behind" />
+      <div class="about-accent"></div>
+      <div class="about-caption">Grossglockner · Austria</div>
     </div>
 
-    <div class="reveal reveal-delay-1">
-      <p class="eyebrow">Your Guide</p>
-      <h2 class="section-title about-title">
-        I'm Will.<br>I'll get you<br><em>to the top.</em>
-      </h2>
+    <div class="reveal reveal-d2">
+      <p class="eyebrow about-eyebrow">Your Guide</p>
+      <h2 class="about-title">I'm Will.<br>I'll get you<br><em>to the top.</em></h2>
       <p class="about-body">
-        I've spent years guiding people through some of the world's most demanding 
-        environments — from the high peaks of the Nepalese Himalaya to the hills of 
-        the Peak District. I know what it takes to get someone to a summit, and I know 
-        how much preparation actually matters.
+        I've spent years guiding people through demanding environments — from the high peaks of the Nepalese Himalaya to the hills of the Peak District. I know what it takes to get someone to a summit, and I know how much preparation matters.
       </p>
       <p class="about-body">
-        I started Balance Adventures because I believe that with the right support, 
-        almost anyone can stand on Kilimanjaro's summit. The Couch to Kili programme 
-        is everything I wish existed when people first asked me how to prepare.
+        I started Balance Adventures because I believe that with the right support, almost anyone can stand on Kilimanjaro's summit.
       </p>
 
       <div class="credentials">
-        <div class="cred">
-          <div class="cred-icon" aria-hidden="true">🏔</div>
-          <div class="cred-text">Expedition leader with high-altitude Himalaya experience</div>
-        </div>
-        <div class="cred">
-          <div class="cred-icon" aria-hidden="true">📋</div>
-          <div class="cred-text">Mountain Leader qualified · D of E Gold Assessor</div>
-        </div>
-        <div class="cred">
-          <div class="cred-icon" aria-hidden="true">🤝</div>
-          <div class="cred-text">Established, trusted ground operator in Tanzania</div>
-        </div>
-        <div class="cred">
-          <div class="cred-icon" aria-hidden="true">📍</div>
-          <div class="cred-text">UK-based — available throughout your whole journey</div>
-        </div>
+        <div class="cred"><div class="cred-marker"></div><div class="cred-text">Expedition leader with high-altitude Himalaya experience</div></div>
+        <div class="cred"><div class="cred-marker"></div><div class="cred-text">Mountain Leader qualified · D of E Gold Assessor</div></div>
+        <div class="cred"><div class="cred-marker"></div><div class="cred-text">Established, trusted ground operator in Tanzania</div></div>
+        <div class="cred"><div class="cred-marker"></div><div class="cred-text">UK-based — available throughout your whole journey</div></div>
       </div>
 
-      <a href="#book" class="btn btn-primary" data-cta>Book a Free Discovery Call</a>
+      <a href="#book" class="btn-primary">Book a free discovery call</a>
     </div>
-
   </div>
 </section>
 
-<!-- ============================================================
-     TESTIMONIAL
-     ============================================================ -->
-<section id="testimonial">
+<!-- ============================================================ TESTIMONIAL ============================================================ -->
+<section id="testimonial" data-screen-label="07 Testimonial">
   <p class="testi-quote reveal">
-    "I genuinely thought Kilimanjaro wasn't for someone like me. 
-    The preparation programme changed everything — by the time we flew out, 
-    I felt ready. Standing on the summit was the proudest moment of my life."
+    I genuinely thought Kilimanjaro wasn't for someone like me. The preparation programme changed everything — by the time we flew out, I felt ready. Standing on the summit was the proudest moment of my life.
   </p>
-  <p class="testi-author reveal reveal-delay-1">Expedition participant</p>
+  <p class="testi-author reveal reveal-d1">— Expedition participant, 2025</p>
 </section>
 
-<!-- ============================================================
-     BOOK / CTA
-     ============================================================ -->
-<section id="book">
-  <div class="book-inner">
-    <p class="eyebrow reveal">Next Expedition · Limited to 8 Places</p>
-    <h2 class="section-title book-title reveal">
-      The mountain<br>is <em>waiting.</em>
-    </h2>
-    <p class="book-sub reveal">
-      Book a free 30-minute discovery call. No pressure, no commitment — 
-      just a conversation about your expedition.
-    </p>
-    <div class="book-actions reveal">
-      <a href="mailto:info@balanceadventures.co.uk?subject=Kilimanjaro Expedition Enquiry" 
-         class="btn btn-primary" data-cta>
-        Book a Discovery Call
-      </a>
-      <a href="mailto:info@balanceadventures.co.uk" class="btn btn-outline">
-        Send an Enquiry
-      </a>
+<!-- ============================================================ FAQ ============================================================ -->
+<section id="faq" data-screen-label="08 FAQ">
+  <div class="container">
+    <div class="faq-header reveal">
+      <p class="eyebrow">Common questions</p>
+      <h2 class="faq-title">Before you <em>ask.</em></h2>
     </div>
-    <p class="book-reassurance reveal">
-      No payment required to enquire &nbsp;·&nbsp; Reply within 24 hours
-    </p>
+    <div class="faq-list" id="faq-list"></div>
   </div>
 </section>
 
-<!-- ============================================================
-     FOOTER
-     ============================================================ -->
+<!-- ============================================================ BOOK ============================================================ -->
+<section id="book" data-screen-label="09 Book">
+  <p class="eyebrow reveal">Next expedition · limited to 8 places</p>
+  <h2 class="book-title reveal">The mountain<br>is <em>waiting.</em></h2>
+  <p class="book-sub reveal">
+    Book a free 30-minute discovery call. No pressure, no commitment — just a conversation about your expedition.
+  </p>
+  <div class="book-actions reveal">
+    <a href="/cdn-cgi/l/email-protection#650c0b030a25070409040b0600040113000b11101700164b060a4b100e5a1610070f000611582e0c090c08040b0f04170a45201d1500010c110c0a0b45200b14100c171c" class="btn-primary">Book a discovery call</a>
+    <a href="/cdn-cgi/l/email-protection#543d3a323b14363538353a3731353022313a20212631277a373b7a213f" class="btn-outline">Send an enquiry</a>
+  </div>
+  <p class="book-reassurance reveal">No payment required to enquire · Response within 24 hours</p>
+</section>
+
+<!-- ============================================================ FOOTER ============================================================ -->
 <footer>
   <div class="footer-inner">
-    <div class="footer-logo">Balance<span>Adventures</span></div>
+    <div class="footer-logo">Balance<span class="dot">·</span>Adventures</div>
     <div class="footer-links">
       <a href="https://instagram.com/balanceadventures" target="_blank" rel="noopener">Instagram</a>
       <a href="#packages">Packages</a>
-      <a href="mailto:info@balanceadventures.co.uk">Contact</a>
-      <!-- Add links to T&Cs and Privacy Policy pages once hosted -->
+      <a href="/cdn-cgi/l/email-protection#e28b8c848da280838e838c8187838694878c9697908791cc818dcc9789">Contact</a>
       <a href="#">Terms</a>
       <a href="#">Privacy</a>
     </div>
@@ -473,8 +1355,66 @@
   </div>
 </footer>
 
-<!-- Scripts -->
-<script src="js/main.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // FAQ
+  const faqs = [
+    { q: "Do I need any hiking experience?", a: "No. The whole point of the Couch to Kili programme is that you start from where you are. We've successfully guided complete beginners. What matters is that you commit to the 6-month preparation." },
+    { q: "What is the success rate, and what happens if I don't make the summit?", a: "Our summit success rate is 92%, compared to the industry average of 65%. If you don't summit, we will always prioritise your safety — but the preparation programme is designed specifically to maximise your chances. We don't move on without you." },
+    { q: "What's included in the price?", a: "All packages include the 8-day climb (accommodation, meals, park fees, porters, guide fees), the full 6-month preparation programme, a UK training hike, and airport transfers in Tanzania. International flights are not included." },
+    { q: "When are the departures?", a: "Expeditions run twice a year — typically March and September, which are the best climbing windows. The next departure is March 2027. Places are limited to 8 per group." },
+    { q: "How fit do I need to be, and by when?", a: "You don't need to be fit right now — that's what the programme is for. You do need to be able to walk 10–15 miles in a day by the time you get to the mountain. We'll get you there." },
+    { q: "What about altitude sickness?", a: "Altitude sickness is a real risk on Kilimanjaro. We include a dedicated altitude sickness briefing with a specialist, an expedition doctor on the mountain, and our routes are chosen specifically to give you the best acclimatisation profile." },
+    { q: "Is this trip suitable for solo travellers?", a: "Absolutely — most of our climbers come solo. Group sizes are capped at 8 to keep things personal, and the 6-month preparation means you'll have already met your team long before you fly." }
+  ];
+  const faqList = document.getElementById('faq-list');
+  faqs.forEach((f, i) => {
+    const item = document.createElement('div');
+    item.className = 'faq-item';
+    item.innerHTML = `
+      <div class="faq-question" role="button" tabindex="0">
+        <span class="faq-question-text">${f.q}</span>
+        <span class="faq-icon"><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 1v10M1 6h10" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+      </div>
+      <div class="faq-answer"><div class="faq-answer-inner" style="padding-top:4px">${f.a}</div></div>
+    `;
+    item.querySelector('.faq-question').addEventListener('click', () => {
+      item.classList.toggle('open');
+    });
+    faqList.appendChild(item);
+  });
+
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  const onScroll = () => {
+    if (window.scrollY > 60) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Burger
+  const burger = document.getElementById('burger');
+  const mobileNav = document.getElementById('mobile-nav');
+  burger.addEventListener('click', () => {
+    burger.classList.toggle('open');
+    mobileNav.classList.toggle('open');
+  });
+  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    burger.classList.remove('open');
+    mobileNav.classList.remove('open');
+  }));
+
+  // Reveal observer
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
 
 </body>
 </html>
